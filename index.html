@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Agreya Coffee — Premium Coffee Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ============================
+   RESET & BASE
+   ============================ */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+  --black:   #09080A;
+  --dark:    #111012;
+  --surface: #181619;
+  --card:    #1E1C1F;
+  --border:  #2A2729;
+  --gold:    #C9A84C;
+  --gold2:   #E8C97A;
+  --gold3:   #F5E4B0;
+  --muted:   #6E6870;
+  --text:    #E2DDD8;
+  --white:   #FAF8F5;
+  --green:   #25D366;
+  --r: 2px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: 'Jost', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Gold shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
+  50% { box-shadow: 0 0 0 12px rgba(201,168,76,0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================
+   LOADER
+   ============================ */
+.loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--black);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+.loader-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; letter-spacing: 0.12em;
+  color: var(--gold2);
+  font-style: italic;
+}
+
+.loader-ring {
+  width: 40px; height: 40px;
+  border: 2px solid rgba(201,168,76,0.15);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loader.hidden {
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+/* ============================
+   STICKY NAV
+   ============================ */
+.nav {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  z-index: 100;
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.nav.scrolled {
+  background: rgba(9,8,10,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(201,168,76,0.12);
+  padding: 12px 20px;
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold));
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+  letter-spacing: 0.05em;
+}
+
+.nav-right {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.nav-badge {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(37,211,102,0.12);
+  border: 1px solid rgba(37,211,102,0.25);
+  padding: 5px 10px; border-radius: 20px;
+  font-size: 0.65rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--green);
+  font-weight: 500;
+}
+
+.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse-gold 2s infinite; }
+
+/* Hamburger */
+.hamburger {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 6px;
+  background: rgba(201,168,76,0.05);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  cursor: pointer;
+}
+
+.hamburger span {
+  display: block; width: 16px; height: 1px;
+  background: var(--gold); border-radius: 1px;
+  transition: all 0.3s;
+}
+
+/* ============================
+   MOBILE MENU DRAWER
+   ============================ */
+.drawer {
+  position: fixed; inset: 0; z-index: 200;
+  pointer-events: none;
+}
+
+.drawer-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+  opacity: 0; transition: opacity 0.3s;
+}
+
+.drawer-panel {
+  position: absolute; top: 0; right: 0;
+  width: 75%; height: 100%;
+  background: var(--surface);
+  border-left: 1px solid rgba(201,168,76,0.12);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(.23,1,.32,1);
+  padding: 60px 32px 32px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.drawer.open { pointer-events: all; }
+.drawer.open .drawer-overlay { opacity: 1; }
+.drawer.open .drawer-panel { transform: translateX(0); }
+
+.drawer-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 50%; background: none;
+  color: var(--gold); font-size: 1.2rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+
+.drawer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; font-style: italic;
+  color: var(--gold2); margin-bottom: 24px;
+}
+
+.drawer-link {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(201,168,76,0.06);
+  text-decoration: none;
+  color: var(--text); font-size: 0.9rem;
+  letter-spacing: 0.08em; font-weight: 400;
+  transition: color 0.2s;
+}
+
+.drawer-link:hover { color: var(--gold2); }
+.drawer-link .dl-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+.drawer-wa {
+  margin-top: auto;
+  background: linear-gradient(135deg, #075E54, #128C7E);
+  color: white !important;
+  padding: 14px !important;
+  border-radius: 8px;
+  justify-content: center;
+  border-bottom: none !important;
+  font-weight: 500 !important;
+}
+
+/* ============================
+   HERO
+   ============================ */
+.hero {
+  position: relative;
+  height: 100svh; min-height: 600px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(201,168,76,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 60%, rgba(160,82,45,0.12) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(9,8,10,0.3) 0%, rgba(9,8,10,0.5) 50%, rgba(9,8,10,1) 100%);
+  z-index: 1;
+}
+
+/* Decorative coffee art background */
+.hero-art {
+  position: absolute; inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.circle-deco {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.08);
+}
+
+.c1 { width: 500px; height: 500px; top: -100px; left: -150px; }
+.c2 { width: 350px; height: 350px; top: 80px; right: -120px; }
+.c3 { width: 200px; height: 200px; bottom: 200px; left: 30px; }
+
+/* Hero food mockup */
+.hero-plate-wrap {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -55%);
+  z-index: 1;
+  animation: float 5s ease-in-out infinite;
+}
+
+.hero-plate-outer {
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #1a0f08, #3a1c0c, #5c2e14, #3a1c0c, #1a0f08);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,0.8),
+    0 0 0 1px rgba(201,168,76,0.15),
+    0 0 60px rgba(201,168,76,0.08);
+}
+
+.hero-plate-inner {
+  width: 220px; height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5a2a12, #2a1008 50%, #150805);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 8px 20px rgba(255,255,255,0.04), inset 0 -8px 16px rgba(0,0,0,0.5);
+  font-size: 7rem;
+  position: relative;
+}
+
+.hero-plate-inner::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.06), transparent 50%);
+}
+
+.hero-plate-glow {
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.12), transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse-gold 3s ease-in-out infinite;
+}
+
+/* Floating chips */
+.float-chip {
+  position: absolute;
+  background: rgba(30,28,31,0.92);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 40px;
+  padding: 8px 14px;
+  display: flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(10px);
+  font-size: 0.72rem; letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.fc1 {
+  top: 22%; left: 5%;
+  animation: float 4s ease-in-out infinite;
+}
+
+.fc2 {
+  top: 30%; right: 4%;
+  animation: float 4s ease-in-out 1.5s infinite;
+}
+
+.fc3 {
+  bottom: 38%; left: 6%;
+  animation: float 4s ease-in-out 0.8s infinite;
+}
+
+.fc-icon { font-size: 1rem; }
+.fc-text strong { display: block; color: var(--gold2); font-weight: 600; font-size: 0.75rem; }
+.fc-text span { color: var(--muted); font-size: 0.65rem; }
+
+.hero-content {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 2;
+  padding: 0 24px 40px;
+  text-align: center;
+}
+
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 6px 16px; border-radius: 20px;
+  font-size: 0.68rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 16px; font-weight: 500;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem; line-height: 1.08;
+  color: var(--white); font-weight: 400;
+  margin-bottom: 12px; letter-spacing: -0.01em;
+}
+
+.hero h1 em { color: var(--gold2); font-style: italic; }
+
+.hero-desc {
+  font-size: 0.85rem; color: var(--muted);
+  line-height: 1.7; margin-bottom: 28px;
+  max-width: 320px; margin-left: auto; margin-right: auto;
+}
+
+.hero-ctas {
+  display: flex; gap: 10px; justify-content: center;
+}
+
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--black);
+  padding: 13px 28px;
+  border-radius: var(--r);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-decoration: none;
+  border: none; cursor: pointer;
+  transition: all 0.25s;
+  display: inline-block;
+  box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+}
+
+.btn-gold:active { transform: scale(0.97); }
+
+.btn-ghost {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--gold);
+  padding: 13px 22px;
+  border-radius: var(--r);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+  transition: all 0.25s;
+}
+
+.btn-ghost:active { background: rgba(201,168,76,0.08); }
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  z-index: 2; width: 30px;
+  animation: fadeIn 1s 2s ease both;
+}
+
+.scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  margin: 0 auto;
+}
+
+/* ============================
+   SECTION COMMONS
+   ============================ */
+.section { padding: 60px 20px; }
+.section-dark { background: var(--dark); }
+.section-surface { background: var(--surface); }
+
+.sec-label {
+  font-size: 0.65rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--gold);
+  font-weight: 600; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.sec-label::before {
+  content: ''; width: 24px; height: 1px;
+  background: var(--gold); display: block;
+}
+
+h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; color: var(--white);
+  font-weight: 400; line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+h2 em { color: var(--gold2); font-style: italic; }
+
+.sec-sub {
+  font-size: 0.83rem; color: var(--muted);
+  line-height: 1.65; margin-bottom: 32px;
+}
+
+/* Gold divider */
+.divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 10px 0 32px;
+}
+
+.divider-line { flex: 1; height: 1px; background: rgba(201,168,76,0.12); }
+.divider-gem { color: var(--gold); font-size: 0.7rem; }
+
+/* ============================
+   STATS STRIP
+   ============================ */
+.stats-strip {
+  background: var(--surface);
+  border-top: 1px solid rgba(201,168,76,0.1);
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+  padding: 20px;
+  display: grid; grid-template-columns: repeat(3,1fr);
+}
+
+.stat-item {
+  text-align: center;
+  padding: 0 10px;
+  position: relative;
+}
+
+.stat-item:not(:last-child)::after {
+  content: ''; position: absolute; right: 0; top: 20%;
+  height: 60%; width: 1px;
+  background: rgba(201,168,76,0.12);
+}
+
+.s-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; color: var(--gold2);
+  font-weight: 500; line-height: 1;
+  display: block;
+}
+
+.s-lbl {
+  font-size: 0.65rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: 4px; display: block; font-weight: 500;
+}
+
+/* ============================
+   MENU SECTION
+   ============================ */
+.menu-filter {
+  display: flex; gap: 8px;
+  overflow-x: auto; padding-bottom: 4px;
+  margin-bottom: 24px;
+  scrollbar-width: none;
+}
+
+.menu-filter::-webkit-scrollbar { display: none; }
+
+.filter-btn {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.75rem; letter-spacing: 0.1em;
+  text-transform: uppercase; font-weight: 500;
+  border: 1px solid rgba(201,168,76,0.15);
+  background: rgba(201,168,76,0.04);
+  color: var(--muted); cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.filter-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--black);
+}
+
+.menu-list { display: flex; flex-direction: column; gap: 1px; }
+
+/* Menu Card */
+.menu-card {
+  background: var(--card);
+  border: 1px solid rgba(201,168,76,0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+  transition: border-color 0.25s;
+}
+
+.menu-card.show { display: flex; flex-direction: column; }
+.menu-card.expanded { border-color: rgba(201,168,76,0.2); }
+
+.mc-top {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px;
+  cursor: pointer;
+}
+
+.mc-emoji {
+  width: 64px; height: 64px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem;
+  position: relative; overflow: hidden;
+}
+
+.mc-emoji::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 60%);
+}
+
+.bg1 { background: linear-gradient(135deg, #2a1005, #150802); }
+.bg2 { background: linear-gradient(135deg, #0d2010, #061208); }
+.bg3 { background: linear-gradient(135deg, #1a1205, #0e0a02); }
+.bg4 { background: linear-gradient(135deg, #1a0510, #0e0208); }
+.bg5 { background: linear-gradient(135deg, #0a1520, #050c14); }
+.bg6 { background: linear-gradient(135deg, #201508, #120c04); }
+
+.mc-info { flex: 1; min-width: 0; }
+
+.mc-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; color: var(--white);
+  margin-bottom: 3px; font-weight: 400;
+}
+
+.mc-short {
+  font-size: 0.78rem; color: var(--muted);
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; line-height: 1.4;
+}
+
+.mc-right {
+  text-align: right; flex-shrink: 0;
+}
+
+.mc-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; color: var(--gold2);
+  font-weight: 500; display: block;
+}
+
+.mc-tag {
+  font-size: 0.6rem; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(201,168,76,0.1);
+  color: var(--gold);
+  padding: 3px 8px; border-radius: 20px;
+  display: inline-block; margin-top: 5px;
+}
+
+.mc-tag.hot { background: rgba(220,60,40,0.12); color: #E86A50; }
+.mc-tag.new-tag { background: rgba(40,160,80,0.12); color: #4DC880; }
+
+/* Expand area */
+.mc-expand {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(.23,1,.32,1);
+  border-top: 0px solid rgba(201,168,76,0.08);
+}
+
+.menu-card.expanded .mc-expand {
+  max-height: 300px;
+  border-top-width: 1px;
+}
+
+.mc-expand-inner {
+  padding: 16px 18px 18px;
+}
+
+.mc-desc {
+  font-size: 0.82rem; color: var(--muted);
+  line-height: 1.7; margin-bottom: 14px;
+}
+
+.mc-extras {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+}
+
+.extra-tag {
+  font-size: 0.65rem; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(201,168,76,0.12);
+  color: var(--muted); padding: 4px 10px;
+  border-radius: 4px; font-weight: 500;
+}
+
+.mc-order-btn {
+  width: 100%;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: linear-gradient(135deg, #075E54, #128C7E);
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(7,94,84,0.3);
+}
+
+.mc-order-btn:active { transform: scale(0.98); }
+
+/* Chevron */
+.mc-chevron {
+  font-size: 0.8rem; color: var(--muted);
+  transition: transform 0.3s, color 0.2s;
+  margin-left: 4px; flex-shrink: 0;
+}
+
+.menu-card.expanded .mc-chevron {
+  transform: rotate(180deg);
+  color: var(--gold);
+}
+
+/* ============================
+   EXPERIENCE SECTION
+   ============================ */
+.exp-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.exp-card {
+  background: var(--card);
+  border: 1px solid rgba(201,168,76,0.07);
+  border-radius: 10px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: border-color 0.25s, transform 0.25s;
+}
+
+.exp-card:active { transform: scale(0.97); }
+.exp-card.wide { grid-column: span 2; }
+
+.exp-icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+
+.exp-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem; color: var(--white);
+  margin-bottom: 5px; font-weight: 400;
+}
+
+.exp-desc { font-size: 0.75rem; color: var(--muted); line-height: 1.55; }
+
+/* ============================
+   REVIEWS
+   ============================ */
+.reviews-scroll {
+  display: flex; gap: 14px;
+  overflow-x: auto; padding-bottom: 8px;
+  margin: 0 -20px; padding-left: 20px; padding-right: 20px;
+  scrollbar-width: none;
+}
+
+.reviews-scroll::-webkit-scrollbar { display: none; }
+
+.rev-card {
+  flex-shrink: 0;
+  width: 280px;
+  background: var(--card);
+  border: 1px solid rgba(201,168,76,0.08);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.rev-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.rev-user { display: flex; align-items: center; gap: 10px; }
+
+.rev-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+
+.rev-name { font-size: 0.85rem; font-weight: 500; color: var(--white); }
+.rev-sub { font-size: 0.68rem; color: var(--muted); margin-top: 1px; }
+.rev-stars { color: var(--gold); font-size: 0.8rem; letter-spacing: 1px; }
+
+.rev-text {
+  font-size: 0.8rem; color: var(--muted);
+  line-height: 1.7;
+}
+
+.rev-text em { color: var(--gold2); font-style: normal; }
+
+.rev-date {
+  font-size: 0.67rem; color: rgba(110,104,112,0.5);
+  margin-top: 12px;
+}
+
+/* Overall rating */
+.rating-overall {
+  background: var(--card);
+  border: 1px solid rgba(201,168,76,0.1);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 20px;
+}
+
+.r-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem; color: var(--gold2);
+  font-weight: 400; line-height: 1;
+  text-align: center;
+}
+
+.r-stars-big { font-size: 1rem; color: var(--gold); letter-spacing: 2px; }
+.r-count { font-size: 0.72rem; color: var(--muted); margin-top: 4px; letter-spacing: 0.05em; }
+
+.r-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+
+.r-bar-row { display: flex; align-items: center; gap: 8px; }
+.r-bar-lbl { font-size: 0.65rem; color: var(--muted); width: 10px; text-align: right; }
+.r-bar-track { flex: 1; height: 4px; background: rgba(201,168,76,0.1); border-radius: 2px; overflow: hidden; }
+.r-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold), var(--gold2)); }
+
+/* ============================
+   MAP SECTION
+   ============================ */
+.map-section { background: var(--dark); padding: 0; }
+
+.map-info {
+  padding: 40px 20px 24px;
+}
+
+.map-placeholder {
+  margin: 0 20px;
+  height: 200px;
+  border-radius: 12px;
+  background:
+    linear-gradient(rgba(9,8,10,0.6), rgba(9,8,10,0.6)),
+    repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(201,168,76,0.03) 30px, rgba(201,168,76,0.03) 31px),
+    repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(201,168,76,0.03) 30px, rgba(201,168,76,0.03) 31px);
+  background-color: #141214;
+  border: 1px solid rgba(201,168,76,0.1);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 10px;
+  position: relative; overflow: hidden;
+  cursor: pointer;
+}
+
+.map-pulse-outer {
+  position: absolute;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.15);
+  animation: pulse-gold 2.5s ease-in-out infinite;
+}
+
+.map-pulse-outer:nth-child(2) {
+  width: 120px; height: 120px;
+  animation-delay: 0.5s;
+  border-color: rgba(201,168,76,0.08);
+}
+
+.map-pin-icon { font-size: 2.5rem; position: relative; z-index: 1; }
+.map-pin-text { font-family: 'Playfair Display', serif; font-size: 1rem; font-style: italic; color: var(--gold2); position: relative; z-index: 1; }
+.map-pin-addr { font-size: 0.72rem; color: var(--muted); position: relative; z-index: 1; text-align: center; max-width: 200px; }
+
+.map-open-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.2);
+  color: var(--gold);
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  margin: 16px 20px 0;
+  transition: background 0.2s;
+}
+
+.map-open-btn:active { background: rgba(201,168,76,0.15); }
+
+.contact-cards {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; padding: 20px 20px 40px;
+}
+
+.contact-card {
+  background: var(--card);
+  border: 1px solid rgba(201,168,76,0.07);
+  border-radius: 10px;
+  padding: 16px;
+  text-decoration: none;
+  transition: border-color 0.2s;
+  display: block;
+}
+
+.contact-card:active { border-color: rgba(201,168,76,0.2); }
+
+.cc-icon { font-size: 1.5rem; margin-bottom: 8px; display: block; }
+.cc-lbl { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; display: block; margin-bottom: 3px; }
+.cc-val { font-size: 0.82rem; color: var(--text); }
+
+/* ============================
+   FLOATING WA BUTTON
+   ============================ */
+.wa-fab {
+  position: fixed;
+  bottom: 24px; right: 20px;
+  z-index: 300;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #075E54, #25D366);
+  box-shadow: 0 8px 24px rgba(37,211,102,0.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  cursor: pointer;
+  animation: pulse-gold 3s ease-in-out infinite;
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.wa-fab:active { transform: scale(0.92); }
+
+.wa-tooltip {
+  position: absolute; right: 68px;
+  background: rgba(9,8,10,0.95);
+  border: 1px solid rgba(37,211,102,0.2);
+  color: var(--text);
+  font-size: 0.75rem; white-space: nowrap;
+  padding: 6px 14px; border-radius: 20px;
+  backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.wa-fab:hover .wa-tooltip { opacity: 1; }
+
+/* ============================
+   FOOTER
+   ============================ */
+footer {
+  background: #060507;
+  border-top: 1px solid rgba(201,168,76,0.08);
+  padding: 36px 20px;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem; font-style: italic;
+  color: var(--gold2); margin-bottom: 8px;
+  display: block;
+  background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold3), var(--gold2), var(--gold));
+  background-size: 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+.footer-sub { font-size: 0.75rem; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 24px; }
+
+.footer-links {
+  display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.footer-links a {
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--gold); }
+
+.footer-socials {
+  display: flex; gap: 10px; justify-content: center;
+  margin-bottom: 24px;
+}
+
+.soc-btn {
+  width: 36px; height: 36px;
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem; cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.soc-btn:hover { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+
+.halal-strip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(37,211,102,0.06);
+  border: 1px solid rgba(37,211,102,0.15);
+  color: var(--green); padding: 6px 14px;
+  border-radius: 20px; font-size: 0.68rem;
+  letter-spacing: 0.1em; font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.footer-copy { font-size: 0.67rem; color: rgba(110,104,112,0.4); letter-spacing: 0.05em; }
+
+/* ============================
+   SCROLL ANIMATIONS
+   ============================ */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal.d1 { transition-delay: 0.08s; }
+.reveal.d2 { transition-delay: 0.16s; }
+.reveal.d3 { transition-delay: 0.24s; }
+
+/* ============================
+   DESKTOP WRAPPER
+   ============================ */
+@media (min-width: 481px) {
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    box-shadow: inset 0 0 0 1px rgba(201,168,76,0.08);
+    pointer-events: none; z-index: 9998;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div class="loader" id="loader">
+  <div class="loader-logo">Agreya</div>
+  <div class="loader-ring"></div>
+</div>
+
+<!-- FLOATING WA -->
+<a class="wa-fab" href="https://wa.me/6281199892958?text=Halo%20Agreya%20Coffee!%20Saya%20mau%20pesan%20menu..." target="_blank">
+  💬
+  <span class="wa-tooltip">Order via WhatsApp</span>
+</a>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">Agreya</div>
+  <div class="nav-right">
+    <div class="nav-badge"><div class="dot"></div>Halal</div>
+    <div class="hamburger" onclick="openDrawer()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-overlay" onclick="closeDrawer()"></div>
+  <div class="drawer-panel">
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    <div class="drawer-logo">Agreya Coffee</div>
+    <a href="#menu" class="drawer-link" onclick="closeDrawer()"><span class="dl-icon">☕</span>Menu</a>
+    <a href="#experience" class="drawer-link" onclick="closeDrawer()"><span class="dl-icon">🏙️</span>Experience</a>
+    <a href="#reviews" class="drawer-link" onclick="closeDrawer()"><span class="dl-icon">⭐</span>Reviews</a>
+    <a href="#location" class="drawer-link" onclick="closeDrawer()"><span class="dl-icon">📍</span>Lokasi</a>
+    <a href="https://wa.me/6281199892958" class="drawer-link drawer-wa" target="_blank"><span class="dl-icon">💬</span>Order WhatsApp</a>
+  </div>
+</div>
+
+<!-- ========================
+     HERO
+     ======================== -->
+<section class="hero" id="hero">
+  <div class="hero-art">
+    <div class="circle-deco c1"></div>
+    <div class="circle-deco c2"></div>
+    <div class="circle-deco c3"></div>
+  </div>
+  <div class="hero-bg"></div>
+
+  <!-- Floating info chips -->
+  <div class="float-chip fc1">
+    <span class="fc-icon">⭐</span>
+    <div class="fc-text">
+      <strong>4.8 Rating</strong>
+      <span>6,639 Ulasan</span>
+    </div>
+  </div>
+
+  <div class="float-chip fc2">
+    <span class="fc-icon">🏙️</span>
+    <div class="fc-text">
+      <strong>Rooftop View</strong>
+      <span>City Panorama</span>
+    </div>
+  </div>
+
+  <div class="float-chip fc3">
+    <span class="fc-icon">🕐</span>
+    <div class="fc-text">
+      <strong>Buka 16.00</strong>
+      <span>Besok · Senin</span>
+    </div>
+  </div>
+
+  <!-- Hero plate illustration -->
+  <div class="hero-plate-wrap">
+    <div class="hero-plate-glow"></div>
+    <div class="hero-plate-outer">
+      <div class="hero-plate-inner">☕</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="hero-content">
+    <div class="hero-tag">✦ Premium Coffee Experience ✦</div>
+    <h1>Where Every<br>Cup <em>Matters.</em></h1>
+    <p class="hero-desc">Rooftop cozy • Specialty coffee • Makanan enak<br>Duren Sawit, Jakarta Timur</p>
+    <div class="hero-ctas">
+      <a href="#menu" class="btn-gold">Lihat Menu</a>
+      <a href="#location" class="btn-ghost">Lokasi</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <span class="s-num">4.8★</span>
+    <span class="s-lbl">Google Rating</span>
+  </div>
+  <div class="stat-item">
+    <span class="s-num">6.6K+</span>
+    <span class="s-lbl">Ulasan</span>
+  </div>
+  <div class="stat-item">
+    <span class="s-num">Halal</span>
+    <span class="s-lbl">Certified</span>
+  </div>
+</div>
+
+<!-- ========================
+     MENU
+     ======================== -->
+<section class="section section-dark" id="menu">
+  <div class="sec-label reveal">Menu Pilihan</div>
+  <h2 class="reveal d1">Our <em>Finest</em><br>Selections.</h2>
+  <div class="divider"><div class="divider-line"></div><div class="divider-gem">✦</div><div class="divider-line"></div></div>
+
+  <div class="menu-filter reveal">
+    <button class="filter-btn active" onclick="filterMenu('all', this)">Semua</button>
+    <button class="filter-btn" onclick="filterMenu('coffee', this)">Coffee</button>
+    <button class="filter-btn" onclick="filterMenu('food', this)">Food</button>
+    <button class="filter-btn" onclick="filterMenu('non', this)">Non-Coffee</button>
+    <button class="filter-btn" onclick="filterMenu('snack', this)">Snack</button>
+  </div>
+
+  <div class="menu-list" id="menuList">
+
+    <!-- Card 1 -->
+    <div class="menu-card show" data-cat="coffee" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg1">☕</div>
+        <div class="mc-info">
+          <div class="mc-name">Agreya Signature Latte</div>
+          <div class="mc-short">Espresso + susu oat + vanilla bean house-made</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">38K</span>
+          <span class="mc-tag hot">Bestseller</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Espresso double shot pilihan kami dipadukan dengan susu oat segar dan vanilla bean yang kami buat sendiri setiap hari. Creamy, balanced, dan selalu memanjakan.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">Hot / Iced</span>
+            <span class="extra-tag">Oat Milk</span>
+            <span class="extra-tag">No Sugar</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Agreya%20Signature%20Latte" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="menu-card show" data-cat="coffee" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg2">🧊</div>
+        <div class="mc-info">
+          <div class="mc-name">Cold Brew Tonic</div>
+          <div class="mc-short">Cold brew 24 jam + tonic + kalamansi</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">42K</span>
+          <span class="mc-tag">Must Try</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Cold brew yang di-steep selama 24 jam menghasilkan karakter kopi yang bold namun smooth. Dipadukan tonic water dan jeruk kalamansi untuk rasa yang segar dan unik.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">Iced Only</span>
+            <span class="extra-tag">Bold Flavor</span>
+            <span class="extra-tag">Refreshing</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Cold%20Brew%20Tonic" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="menu-card show" data-cat="coffee" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg3">🌸</div>
+        <div class="mc-info">
+          <div class="mc-name">Rose Caramel Latte</div>
+          <div class="mc-short">Espresso + rose syrup + caramel drizzle</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">40K</span>
+          <span class="mc-tag new-tag">New</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Perpaduan bunga dan kopi yang tak terduga. Sirup rose premium kami memberikan aroma floral yang lembut, diimbangi espresso dan caramel drizzle.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">Hot / Iced</span>
+            <span class="extra-tag">Floral</span>
+            <span class="extra-tag">Sweet</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Rose%20Caramel%20Latte" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="menu-card show" data-cat="non" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg4">🍵</div>
+        <div class="mc-info">
+          <div class="mc-name">Matcha Latte</div>
+          <div class="mc-short">Matcha grade A Uji + susu segar pilihan</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">45K</span>
+          <span class="mc-tag hot">Bestseller</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Matcha ceremonial grade dari Uji, Jepang — kualitas terbaik yang menghasilkan rasa umami khas yang dalam. Dipadukan susu segar dan sedikit madu.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">Hot / Iced</span>
+            <span class="extra-tag">Grade A</span>
+            <span class="extra-tag">Japan Import</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Matcha%20Latte" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="menu-card show" data-cat="food" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg5">🥞</div>
+        <div class="mc-info">
+          <div class="mc-name">Japanese Soufflé Pancake</div>
+          <div class="mc-short">Fluffy tebal + maple syrup + fresh berry</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">68K</span>
+          <span class="mc-tag">Brunch</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Pancake soufflé Jepang yang dibuat satu per satu — lembut seperti awan, tinggi dan fluffy. Disajikan dengan maple syrup premium, butter kulture, dan buah segar pilihan.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">Made Fresh</span>
+            <span class="extra-tag">15–20 Min</span>
+            <span class="extra-tag">Brunch Special</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Japanese%20Soufflé%20Pancake" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="menu-card show" data-cat="food" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg6">🥗</div>
+        <div class="mc-info">
+          <div class="mc-name">Smashed Avo Toast</div>
+          <div class="mc-short">Sourdough + alpukat + telur poached + micro</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">72K</span>
+          <span class="mc-tag">Healthy</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Sourdough panggang crispy dengan alpukat segar yang di-smash kasar, telur poached sempurna, microgreens, dan finishing truffle oil. Sehat dan mengenyangkan.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">Vegetarian</span>
+            <span class="extra-tag">High Protein</span>
+            <span class="extra-tag">Sourdough</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Smashed%20Avo%20Toast" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 7 -->
+    <div class="menu-card" data-cat="snack" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg1">🧇</div>
+        <div class="mc-info">
+          <div class="mc-name">Belgian Waffle</div>
+          <div class="mc-short">Renyah di luar, lembut di dalam + topping</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">48K</span>
+          <span class="mc-tag">Snack</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Waffle Belgium original — renyah di luar, soft di dalam. Pilih topping: Nutella & pisang, whipped cream & strawberry, atau salted caramel & almond.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">3 Topping Pilihan</span>
+            <span class="extra-tag">Fresh Made</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Belgian%20Waffle" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 8 -->
+    <div class="menu-card" data-cat="non" onclick="toggleCard(this)">
+      <div class="mc-top">
+        <div class="mc-emoji bg4">🍹</div>
+        <div class="mc-info">
+          <div class="mc-name">Strawberry Yakult Slush</div>
+          <div class="mc-short">Strawberry + yakult + slush es crushed</div>
+        </div>
+        <div class="mc-right">
+          <span class="mc-price">35K</span>
+          <span class="mc-tag new-tag">New</span>
+        </div>
+        <div class="mc-chevron">▾</div>
+      </div>
+      <div class="mc-expand">
+        <div class="mc-expand-inner">
+          <p class="mc-desc">Minuman kekinian yang menyegarkan — stroberi segar diblender dengan yakult dan es crushed. Asam-segar yang bikin nagih di segala cuaca.</p>
+          <div class="mc-extras">
+            <span class="extra-tag">Iced</span>
+            <span class="extra-tag">Probiotic</span>
+            <span class="extra-tag">Refreshing</span>
+          </div>
+          <a class="mc-order-btn" href="https://wa.me/6281199892958?text=Halo%20Agreya!%20Saya%20mau%20pesan%20Strawberry%20Yakult%20Slush" target="_blank">
+            💬 Order via WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Full WA order -->
+  <a href="https://wa.me/6281199892958?text=Halo%20Agreya%20Coffee!%20Saya%20mau%20lihat%20menu%20lengkap." target="_blank" class="btn-gold" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:24px; padding:15px;">
+    💬 Lihat Menu Lengkap via WhatsApp
+  </a>
+</section>
+
+<!-- ========================
+     EXPERIENCE
+     ======================== -->
+<section class="section section-surface" id="experience">
+  <div class="sec-label reveal">Kenapa Agreya?</div>
+  <h2 class="reveal d1"><em>Experience</em><br>The Difference.</h2>
+  <div class="divider"><div class="divider-line"></div><div class="divider-gem">✦</div><div class="divider-line"></div></div>
+
+  <div class="exp-grid">
+    <div class="exp-card reveal">
+      <span class="exp-icon">🏙️</span>
+      <div class="exp-title">Rooftop View</div>
+      <p class="exp-desc">Nikmati panorama kota Jakarta dari lantai paling atas</p>
+    </div>
+    <div class="exp-card reveal d1">
+      <span class="exp-icon">☕</span>
+      <div class="exp-title">Specialty Coffee</div>
+      <p class="exp-desc">Biji kopi single origin pilihan dari petani lokal</p>
+    </div>
+    <div class="exp-card reveal d2">
+      <span class="exp-icon">🎵</span>
+      <div class="exp-title">Live Acoustic</div>
+      <p class="exp-desc">Jumat & Sabtu malam bersama musisi terpilih</p>
+    </div>
+    <div class="exp-card reveal d3">
+      <span class="exp-icon">🌿</span>
+      <div class="exp-title">Halal Certified</div>
+      <p class="exp-desc">Semua menu telah bersertifikat halal MUI resmi</p>
+    </div>
+    <div class="exp-card wide reveal">
+      <span class="exp-icon">🛵</span>
+      <div class="exp-title">Dine-in · Takeaway · Delivery</div>
+      <p class="exp-desc">Tersedia untuk makan di tempat, bawa pulang, maupun pesan antar tanpa kontak langsung</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========================
+     REVIEWS
+     ======================== -->
+<section class="section section-dark" id="reviews">
+  <div class="sec-label reveal">Ulasan Pelanggan</div>
+  <h2 class="reveal d1">What People<br><em>Are Saying.</em></h2>
+  <div class="divider"><div class="divider-line"></div><div class="divider-gem">✦</div><div class="divider-line"></div></div>
+
+  <div class="rating-overall reveal">
+    <div>
+      <div class="r-big">4.8</div>
+      <div class="r-stars-big">★★★★★</div>
+      <div class="r-count">6,639 ulasan Google</div>
+    </div>
+    <div class="r-bars">
+      <div class="r-bar-row"><span class="r-bar-lbl">5</span><div class="r-bar-track"><div class="r-bar-fill" style="width:82%"></div></div></div>
+      <div class="r-bar-row"><span class="r-bar-lbl">4</span><div class="r-bar-track"><div class="r-bar-fill" style="width:12%"></div></div></div>
+      <div class="r-bar-row"><span class="r-bar-lbl">3</span><div class="r-bar-track"><div class="r-bar-fill" style="width:3%"></div></div></div>
+      <div class="r-bar-row"><span class="r-bar-lbl">2</span><div class="r-bar-track"><div class="r-bar-fill" style="width:2%"></div></div></div>
+      <div class="r-bar-row"><span class="r-bar-lbl">1</span><div class="r-bar-track"><div class="r-bar-fill" style="width:1%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="reviews-scroll">
+
+    <div class="rev-card">
+      <div class="rev-top">
+        <div class="rev-user">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,#c47040,#6a2010);">👩</div>
+          <div>
+            <div class="rev-name">Salsa Nurani</div>
+            <div class="rev-sub">Local Guide · 12 reviews</div>
+          </div>
+        </div>
+        <div class="rev-stars">★★★★★</div>
+      </div>
+      <div class="rev-text">
+        Salah satu tempat yang bakal bikin <em>balik lagi terus</em>! Karena se-cozy itu tempatnya. Makanannya ga pernah gagal, minumannya juga enak. Servicenya dari lobby sampai rooftop <em>ramah semua</em>!
+      </div>
+      <div class="rev-date">2 bulan yang lalu</div>
+    </div>
+
+    <div class="rev-card">
+      <div class="rev-top">
+        <div class="rev-user">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,#4070c4,#102060);">👨</div>
+          <div>
+            <div class="rev-name">Rizky M.</div>
+            <div class="rev-sub">Level 5 · 48 reviews</div>
+          </div>
+        </div>
+        <div class="rev-stars">★★★★★</div>
+      </div>
+      <div class="rev-text">
+        Rooftop-nya punya <em>view kota yang keren</em> banget! Kopi-nya enak, harga sepadan. Sudah beberapa kali ke sini dan selalu puas. Cold brew tonic-nya recommended!
+      </div>
+      <div class="rev-date">1 bulan yang lalu</div>
+    </div>
+
+    <div class="rev-card">
+      <div class="rev-top">
+        <div class="rev-user">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,#40c470,#106020);">👩</div>
+          <div>
+            <div class="rev-name">Dinda P.</div>
+            <div class="rev-sub">Local Guide · 31 reviews</div>
+          </div>
+        </div>
+        <div class="rev-stars">★★★★★</div>
+      </div>
+      <div class="rev-text">
+        Ambiance-nya <em>aesthetic banget</em>! Cocok buat nongkrong, meeting, date night. Staffnya super friendly. Matcha latte-nya terbaik di Jakarta Timur!
+      </div>
+      <div class="rev-date">3 minggu yang lalu</div>
+    </div>
+
+    <div class="rev-card">
+      <div class="rev-top">
+        <div class="rev-user">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,#c4a040,#6a5010);">👨</div>
+          <div>
+            <div class="rev-name">Budi S.</div>
+            <div class="rev-sub">Food Blogger</div>
+          </div>
+        </div>
+        <div class="rev-stars">★★★★★</div>
+      </div>
+      <div class="rev-text">
+        Waffle dan pancake-nya <em>luar biasa enak</em>! Tekstur fluffy, rasa manis pas. Porsi juga besar. Tempat parkir luas, mudah dijangkau dari mana saja.
+      </div>
+      <div class="rev-date">2 minggu yang lalu</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================
+     LOCATION
+     ======================== -->
+<section id="location" class="map-section">
+  <div class="map-info">
+    <div class="sec-label reveal">Temukan Kami</div>
+    <h2 class="reveal d1">Visit Us<br><em>Anytime.</em></h2>
+    <p class="sec-sub reveal d2">Jl. Kolonel Sugiono No.15/4, RT.4/RW.1,<br>Duren Sawit, Jakarta Timur 13440</p>
+  </div>
+
+  <!-- Map placeholder (clickable to open Google Maps) -->
+  <a class="map-placeholder" href="https://maps.google.com/?q=Agreya+Coffee+Duren+Sawit+Jakarta" target="_blank">
+    <div class="map-pulse-outer"></div>
+    <div class="map-pulse-outer"></div>
+    <div class="map-pin-icon">📍</div>
+    <div class="map-pin-text">Agreya Coffee</div>
+    <div class="map-pin-addr">Jl. Kolonel Sugiono No.15/4, Duren Sawit</div>
+  </a>
+
+  <a class="map-open-btn" href="https://maps.google.com/?q=Agreya+Coffee+Duren+Sawit+Jakarta" target="_blank">
+    🗺️ Buka di Google Maps
+  </a>
+
+  <div class="contact-cards">
+    <a class="contact-card" href="tel:08119989295">
+      <span class="cc-icon">📞</span>
+      <span class="cc-lbl">Telepon</span>
+      <span class="cc-val">0811-9989-2958</span>
+    </a>
+    <a class="contact-card" href="https://wa.me/6281199892958" target="_blank">
+      <span class="cc-icon">💬</span>
+      <span class="cc-lbl">WhatsApp</span>
+      <span class="cc-val">Chat Sekarang</span>
+    </a>
+    <a class="contact-card" href="https://instagram.com/agreyacoffee" target="_blank">
+      <span class="cc-icon">📸</span>
+      <span class="cc-lbl">Instagram</span>
+      <span class="cc-val">@agreyacoffee</span>
+    </a>
+    <a class="contact-card" href="https://agreyacoffee.com" target="_blank">
+      <span class="cc-icon">🌐</span>
+      <span class="cc-lbl">Website</span>
+      <span class="cc-val">agreyacoffee.com</span>
+    </a>
+  </div>
+
+  <!-- Jam buka -->
+  <div style="padding: 0 20px 40px;">
+    <div style="background:var(--card); border:1px solid rgba(201,168,76,0.08); border-radius:10px; overflow:hidden;">
+      <div style="padding:16px 20px; border-bottom:1px solid rgba(201,168,76,0.06); display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-family:'Playfair Display',serif; font-size:1rem; color:var(--white);">Jam Operasional</span>
+        <span style="font-size:0.65rem; letter-spacing:0.1em; background:rgba(37,211,102,0.1); border:1px solid rgba(37,211,102,0.2); color:var(--green); padding:4px 10px; border-radius:20px; font-weight:600;">Buka Besok</span>
+      </div>
+      <div style="padding:0 20px;">
+        <div style="padding:12px 0; border-bottom:1px solid rgba(201,168,76,0.04); display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted);">
+          <span>Senin – Jumat</span><span style="color:var(--text);">16.00 – 23.00</span>
+        </div>
+        <div style="padding:12px 0; border-bottom:1px solid rgba(201,168,76,0.04); display:flex; justify-content:space-between; font-size:0.82rem;">
+          <span style="color:var(--gold);">Jumat ✦ Live Music</span><span style="color:var(--gold);">16.00 – 00.00</span>
+        </div>
+        <div style="padding:12px 0; border-bottom:1px solid rgba(201,168,76,0.04); display:flex; justify-content:space-between; font-size:0.82rem;">
+          <span style="color:var(--gold);">Sabtu ✦ Live Music</span><span style="color:var(--gold);">10.00 – 00.00</span>
+        </div>
+        <div style="padding:12px 0; display:flex; justify-content:space-between; font-size:0.82rem; color:var(--muted);">
+          <span>Minggu</span><span style="color:var(--text);">10.00 – 22.00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================
+     FOOTER
+     ======================== -->
+<footer>
+  <span class="footer-logo">Agreya Coffee</span>
+  <p class="footer-sub">Premium Coffee Experience · Duren Sawit, Jakarta Timur</p>
+
+  <div class="footer-links">
+    <a href="#menu">Menu</a>
+    <a href="#experience">Experience</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#location">Lokasi</a>
+  </div>
+
+  <div class="footer-socials">
+    <div class="soc-btn">📸</div>
+    <div class="soc-btn">📘</div>
+    <div class="soc-btn">🐦</div>
+    <div class="soc-btn">▶️</div>
+  </div>
+
+  <div class="halal-strip">✅ Halal Certified MUI</div>
+
+  <p class="footer-copy">© 2024 Agreya Coffee Duren Sawit. All rights reserved.</p>
+</footer>
+
+
+<script>
+// ============ LOADER ============
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hidden');
+    setTimeout(() => document.getElementById('loader').remove(), 600);
+  }, 1200);
+});
+
+// ============ NAV SCROLL ============
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ============ DRAWER ============
+function openDrawer() {
+  document.getElementById('drawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ============ MENU TOGGLE CARD ============
+function toggleCard(card) {
+  const wasExpanded = card.classList.contains('expanded');
+  // Close all
+  document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('expanded'));
+  // If wasn't expanded, open it
+  if (!wasExpanded) card.classList.add('expanded');
+}
+
+// ============ MENU FILTER ============
+function filterMenu(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Close expanded
+  document.querySelectorAll('.menu-card').forEach(c => c.classList.remove('expanded'));
+
+  document.querySelectorAll('.menu-card').forEach(card => {
+    const show = cat === 'all' || card.dataset.cat === cat;
+    card.classList.toggle('show', show);
+  });
+}
+
+// ============ SCROLL REVEAL ============
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ============ SMOOTH LINK CLOSE DRAWER ============
+document.querySelectorAll('.drawer-link').forEach(link => {
+  link.addEventListener('click', () => setTimeout(closeDrawer, 100));
+});
+</script>
+</body>
+</html>
